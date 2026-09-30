@@ -3,6 +3,8 @@ import PublicLayout from '../../components/PublicLayout'
 import WhyChooseUs from '../../components/WhyChooseUs'
 import ImpactMetrics from '../../components/ImpactMetrics'
 import AccreditedBy from '../../components/AccreditedBy'
+import BreakingNewsPopup from '../../components/BreakingNewsPopup'
+import HomeScamAlerts from '../../components/HomeScamAlerts'
 
 const steps = [
   ['1', 'Tell us what happened', 'Submit your case with as much detail as you have — dates, amounts, screenshots.', '/images/step-1-notes.jpg'],
@@ -166,6 +168,9 @@ export default function Home() {
         </div>
       </section>
 
+      {/* SCAM ALERTS SECTION — NEW */}
+      <HomeScamAlerts />
+
       {/* SUPPORT STRIP */}
       <section style={{ background: 'var(--paper-raised)', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }}>
         <div
@@ -224,6 +229,10 @@ export default function Home() {
           </Link>
         </div>
       </section>
+
+      {/* BREAKING NEWS POPUP */}
+      <BreakingNewsPopup />
+
     </PublicLayout>
   )
 }
