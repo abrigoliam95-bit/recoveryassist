@@ -3,7 +3,6 @@ import PublicLayout from '../../components/PublicLayout'
 import WhyChooseUs from '../../components/WhyChooseUs'
 import ImpactMetrics from '../../components/ImpactMetrics'
 import AccreditedBy from '../../components/AccreditedBy'
-import BreakingNewsPopup from '../../components/BreakingNewsPopup'
 import HomeScamAlerts from '../../components/HomeScamAlerts'
 
 const steps = [
@@ -229,9 +228,6 @@ export default function Home() {
           </Link>
         </div>
       </section>
-
-      {/* BREAKING NEWS POPUP */}
-      <BreakingNewsPopup />
 
     </PublicLayout>
   )
