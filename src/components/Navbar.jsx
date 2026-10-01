@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import SiteLogo from './SiteLogo';
+import LanguageSwitcher from './LanguageSwitcher';
 
 const links = [
   { to: '/', label: 'Home' },
@@ -156,8 +157,10 @@ export default function Navbar() {
           />
         </div>
 
-        {/* Right Side: Start a case Button + Hamburger */}
+        {/* Right Side: Language Switcher + Start a case Button + Hamburger */}
         <div style={styles.rightSection}>
+          <LanguageSwitcher />
+
           <Link to="/start-a-case" className="btn btn-gold start-case-desktop-btn">
             Start a case
           </Link>
