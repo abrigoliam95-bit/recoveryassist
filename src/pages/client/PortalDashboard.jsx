@@ -55,7 +55,9 @@ export default function PortalDashboard() {
   const primary = cases[0]
   const activeMatters = cases.filter((c) => c.status !== 'closed' && c.status !== 'resolved').length
   const pendingFees = fees.filter((f) => f.status !== 'paid')
-  const recoveryProgress = primary ? primary.recovery_progress : 0
+  
+  // FIX: Use `|| 0` as fallback so we never show "undefined"
+  const recoveryProgress = (primary && primary.recovery_progress) || 0
   const lifetimeRecovered = cases.reduce((sum, c) => sum + Number(c.recovered_amount || 0), 0)
 
   if (loading) {
@@ -102,8 +104,8 @@ export default function PortalDashboard() {
                 <div style={{ minWidth: 0 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6, flexWrap: 'wrap' }}>
                     <h3 style={{ fontSize: 18, margin: 0 }}>{primary.case_number || 'Pending'}</h3>
-                    <Badge color="var(--teal)" bg="#e6f0ee">{primary.status.replace('_', ' ')}</Badge>
-                    <Badge color="var(--gold)" bg="#f7ecd9">Priority: {primary.priority}</Badge>
+                    <Badge color="var(--teal)" bg="#e6f0ee">{(primary.status || 'new').replace('_', ' ')}</Badge>
+                    <Badge color="var(--gold)" bg="#f7ecd9">Priority: {primary.priority || 'Standard'}</Badge>
                   </div>
                   <p style={{ fontSize: 14, margin: 0 }}>
                     {primary.scheme_type || primary.title} · Filed {new Date(primary.created_at).toLocaleDateString()}
@@ -118,10 +120,16 @@ export default function PortalDashboard() {
               </div>
             </Card>
 
-            {/* MATTER FINANCIALS ROW */}
+            {/* MATTER FINANCIALS ROW — FIXED: safe fallbacks */}
             <div className="portal-grid grid-3">
-              <StatCard label="Amount in dispute" value={`$${Number(primary.amount_in_dispute).toFixed(2)}`} />
-              <StatCard label="Recovered to date" value={`$${Number(primary.recovered_amount).toFixed(2)}`} />
+              <StatCard 
+                label="Amount in dispute" 
+                value={`$${Number(primary.amount_in_dispute || 0).toFixed(2)}`} 
+              />
+              <StatCard 
+                label="Recovered to date" 
+                value={`$${Number(primary.recovered_amount || 0).toFixed(2)}`} 
+              />
               <StatCard label="Recovery progress" value={`${recoveryProgress}%`}>
                 <ProgressBar percent={recoveryProgress} />
               </StatCard>
@@ -148,7 +156,7 @@ export default function PortalDashboard() {
                     </p>
                   </div>
                   <div className="pending-fee-actions">
-                    <span style={{ fontWeight: 600 }}>${Number(fee.amount).toFixed(2)}</span>
+                    <span style={{ fontWeight: 600 }}>${Number(fee.amount || 0).toFixed(2)}</span>
                     <Link to="/billing" className="btn btn-gold" style={{ border: 'none', fontSize: 13 }}>Authorize payment</Link>
                   </div>
                 </div>
@@ -165,7 +173,7 @@ export default function PortalDashboard() {
           <StatCard label="Active matters" value={activeMatters} />
         </div>
 
-        {/* OPEN MATTERS TABLE */}
+        {/* OPEN MATTERS TABLE — FIXED: safe fallback for progress */}
         <Card>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, flexWrap: 'wrap', gap: 8 }}>
             <h3 style={{ fontSize: 17, margin: 0 }}>Open matters</h3>
@@ -188,14 +196,14 @@ export default function PortalDashboard() {
                   <tr><td style={tdStyle} colSpan={6}>No matters on file yet.</td></tr>
                 )}
                 {cases.map((c) => {
-                  const progress = c.recovery_progress
+                  const progress = c.recovery_progress || 0
                   return (
                     <tr key={c.id} style={{ borderTop: '1px solid var(--border)' }}>
                       <td style={tdStyle}>{c.case_number || '—'}</td>
                       <td style={tdStyle}>{c.scheme_type || c.title}</td>
-                      <td style={tdStyle}>${Number(c.amount_in_dispute).toFixed(2)}</td>
+                      <td style={tdStyle}>${Number(c.amount_in_dispute || 0).toFixed(2)}</td>
                       <td style={tdStyle}>{progress}%</td>
-                      <td style={tdStyle}><Badge color="var(--teal)" bg="#e6f0ee">{c.status.replace('_', ' ')}</Badge></td>
+                      <td style={tdStyle}><Badge color="var(--teal)" bg="#e6f0ee">{(c.status || 'new').replace('_', ' ')}</Badge></td>
                       <td style={tdStyle}>{new Date(c.created_at).toLocaleDateString()}</td>
                     </tr>
                   )
@@ -274,9 +282,10 @@ function StatCard({ label, value, sub, children }) {
 }
 
 function ProgressBar({ percent }) {
+  const safePercent = Math.max(0, Math.min(100, Number(percent) || 0))
   return (
     <div style={{ background: 'var(--border)', borderRadius: 4, height: 6, overflow: 'hidden' }}>
-      <div style={{ width: `${percent}%`, background: 'var(--gold)', height: '100%' }} />
+      <div style={{ width: `${safePercent}%`, background: 'var(--gold)', height: '100%' }} />
     </div>
   )
 }

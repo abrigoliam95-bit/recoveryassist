@@ -1,18 +1,30 @@
-import { useState, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import PublicLayout from '../../components/PublicLayout'
 import { supabase } from '../../lib/supabaseClient'
 import Recaptcha from '../../components/Recaptcha'
+import { useAuth } from '../../context/AuthContext'
 
 export default function Login() {
   const navigate = useNavigate()
   const recaptchaRef = useRef(null)
+
+  // Get the auth state from the global context
+  const { user, role, loading: authLoading } = useAuth()
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+
+  // THE FIX: Wait for the user AND role to be fully loaded before navigating.
+  // This prevents the "bounce back to home" on the first login attempt.
+  useEffect(() => {
+    if (user && role && !authLoading) {
+      navigate('/dashboard')
+    }
+  }, [user, role, authLoading, navigate])
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -57,8 +69,8 @@ export default function Login() {
         return
       }
 
-      // 3. Success
-      navigate('/dashboard')
+      // NOTE: No navigate() call here! The useEffect above handles it once 
+      // the auth context is fully ready.
     } catch (err) {
       setLoading(false)
       console.error('Login error:', err)

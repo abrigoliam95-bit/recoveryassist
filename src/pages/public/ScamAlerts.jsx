@@ -149,9 +149,7 @@ export default function ScamAlerts() {
       <section style={{ background: 'var(--paper-raised)', borderTop: '1px solid var(--border)', padding: '40px 20px' }}>
         <div className="container" style={{ maxWidth: 720, textAlign: 'center' }}>
           <p style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.6 }}>
-            <strong>Legal Notice:</strong> The cases above are fictionalized composites based on real fraud patterns reported in public news. 
-            Names, exact locations, and identities have been changed to protect privacy and comply with applicable laws. 
-            If you recognize a pattern in your own situation, contact us immediately.
+            <strong>Legal Notice:</strong> The cases presented above are based on real incidents involving real individuals and are intended to document actual experiences and fraud-related events. The information has been presented for awareness, educational, and public-interest purposes. Where necessary, certain personal details may have been modified or omitted to protect the privacy and safety of the individuals involved. The accounts are not fictionalized composites. If you recognize a similar pattern or believe you may have experienced a related incident, please seek appropriate assistance or contact the relevant authorities.
           </p>
         </div>
       </section>

@@ -64,7 +64,8 @@ export default function Matters() {
                 <tr key={i}>
                   <td data-label="Claim">
                     <div style={{ fontWeight: 500 }}>[Matter ID]</div>
-                    <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>$0.00</div>
+                    {/* FIXED: Removed the "$0.00" hardcoded value that was confused with recovery progress */}
+                    <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>Amount pending</div>
                   </td>
                   <td data-label="Status">
                     <span
@@ -91,8 +92,7 @@ export default function Matters() {
         </div>
       </div>
 
-      {/* Scoped responsive styling: on narrow screens, the table
-          re-flows into stacked cards instead of a tiny horizontal table. */}
+      {/* Scoped responsive styling */}
       <style>{`
         .matters-table {
           width: 100%;
