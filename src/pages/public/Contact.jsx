@@ -18,8 +18,8 @@ export default function Contact() {
         </p>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14, fontSize: 16 }}>
-          <div><strong>Email:</strong> support@recoveryassist.example</div>
-          <div><strong>Phone:</strong> Available 24/7 — number provided after case intake</div>
+          <div><strong>Email:</strong> contact@recoveryassist.support</div>
+          <div><strong>Phone:</strong> +1(870)318-2847</div>
           <div><strong>Live chat:</strong> Bottom-right corner of any page</div>
         </div>
       </section>

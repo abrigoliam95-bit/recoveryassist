@@ -5,19 +5,45 @@ const LANGUAGES = [
   { code: 'fr',    name: 'Français',           flag: '🇫🇷' },
   { code: 'es',    name: 'Español',            flag: '🇪🇸' },
   { code: 'pt',    name: 'Português',          flag: '🇵🇹' },
-  { code: 'ar',    name: 'العربية',             flag: '🇸🇦' },
-  { code: 'zh-CN', name: '中文 (简体)',         flag: '🇨🇳' },
-  { code: 'hi',    name: 'हिन्दी',              flag: '🇮🇳' },
-  { code: 'ru',    name: 'Русский',            flag: '🇷🇺' },
   { code: 'de',    name: 'Deutsch',            flag: '🇩🇪' },
+  { code: 'it',    name: 'Italiano',           flag: '🇮🇹' },
+  { code: 'ru',    name: 'Русский',            flag: '🇷🇺' },
+  { code: 'nl',    name: 'Nederlands',         flag: '🇳🇱' },
+  { code: 'pl',    name: 'Polski',             flag: '🇵🇱' },
+  { code: 'sv',    name: 'Svenska',            flag: '🇸🇪' },
+  { code: 'el',    name: 'Ελληνικά',           flag: '🇬🇷' },
+  { code: 'uk',    name: 'Українська',         flag: '🇺🇦' },
+  { code: 'ro',    name: 'Română',             flag: '🇷🇴' },
+  { code: 'ar',    name: 'العربية',             flag: '🇸🇦' },
+  { code: 'fa',    name: 'فارسی',              flag: '🇮🇷' },
+  { code: 'zh-CN', name: '中文 (简体)',         flag: '🇨🇳' },
   { code: 'ja',    name: '日本語',              flag: '🇯🇵' },
   { code: 'ko',    name: '한국어',              flag: '🇰🇷' },
+  { code: 'hi',    name: 'हिन्दी',              flag: '🇮🇳' },
+  { code: 'bn',    name: 'বাংলা',               flag: '🇧🇩' },
+  { code: 'ur',    name: 'اردو',               flag: '🇵🇰' },
   { code: 'tr',    name: 'Türkçe',             flag: '🇹🇷' },
   { code: 'id',    name: 'Bahasa Indonesia',   flag: '🇮🇩' },
-  { code: 'yo',    name: 'Yorùbá',             flag: '🇳🇬' },
-  { code: 'ha',    name: 'Hausa',              flag: '🇳🇬' },
-  { code: 'ig',    name: 'Igbo',               flag: '🇳🇬' },
+  { code: 'vi',    name: 'Tiếng Việt',         flag: '🇻🇳' },
+  { code: 'th',    name: 'ไทย',                flag: '🇹🇭' },
+  { code: 'ms',    name: 'Bahasa Melayu',      flag: '🇲🇾' },
+  { code: 'tl',    name: 'Tagalog',            flag: '🇵🇭' },
+  { code: 'sw',    name: 'Kiswahili',          flag: '🇰🇪' },
 ]
+
+function applyTranslation(code) {
+  const cookieValue = code === 'en' ? '' : `/en/${code}`
+  const host = window.location.hostname
+
+  // Clear old cookies
+  document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/'
+  document.cookie = `googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.${host}`
+
+  if (code !== 'en') {
+    document.cookie = `googtrans=${cookieValue}; path=/`
+    document.cookie = `googtrans=${cookieValue}; path=/; domain=.${host}`
+  }
+}
 
 export default function LanguageSwitcher() {
   const [isOpen, setIsOpen] = useState(false)
@@ -25,8 +51,25 @@ export default function LanguageSwitcher() {
   const dropdownRef = useRef(null)
 
   useEffect(() => {
-    const match = document.cookie.match(/googtrans=\/en\/([^;]+)/)
-    setCurrentLang(match ? match[1] : 'en')
+    // 1. Check if the user has explicitly chosen a language before
+    const explicitChoice = localStorage.getItem('userLangChoice')
+    if (explicitChoice) {
+      setCurrentLang(explicitChoice)
+      return
+    }
+
+    // 2. If not, try to auto-detect their browser language
+    const browserLang = navigator.language || navigator.userLanguage
+    const baseLang = browserLang.split('-')[0]
+    
+    // Find a match in our language list
+    const matched = LANGUAGES.find(l => l.code === browserLang || l.code === baseLang)
+
+    if (matched && matched.code !== 'en') {
+      // Only auto-translate if we found a match that isn't English
+      setCurrentLang(matched.code)
+      applyTranslation(matched.code)
+    }
   }, [])
 
   useEffect(() => {
@@ -40,18 +83,9 @@ export default function LanguageSwitcher() {
   }, [])
 
   function selectLanguage(code) {
-    const cookieValue = code === 'en' ? '' : `/en/${code}`
-    const host = window.location.hostname
-
-    // Clear old cookies
-    document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/'
-    document.cookie = `googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.${host}`
-
-    if (code !== 'en') {
-      document.cookie = `googtrans=${cookieValue}; path=/`
-      document.cookie = `googtrans=${cookieValue}; path=/; domain=.${host}`
-    }
-
+    // Save the user's explicit choice so we don't override it next time
+    localStorage.setItem('userLangChoice', code)
+    applyTranslation(code)
     setCurrentLang(code)
     setIsOpen(false)
     window.location.reload()
